@@ -16,6 +16,8 @@ namespace CafeManagement.Controllers
 
         // ── LOGIN ──────────────────────────────
         [HttpGet]
+        [Route("Auth/Login")]
+        [Route("Login")]
         public IActionResult Login()
         {
             if (HttpContext.Session.GetString("UserId") != null)
@@ -25,9 +27,12 @@ namespace CafeManagement.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken] // ✅ CSRF protection
+        [Route("Auth/Login")]
+        [Route("Login")]
+        [ValidateAntiForgeryToken]
         public IActionResult Login(LoginViewModel model)
         {
+            // ... (rest of logic)
             if (!ModelState.IsValid) return View(model);
 
             try
@@ -58,6 +63,8 @@ namespace CafeManagement.Controllers
 
         // ── REGISTER ──────────────────────────
         [HttpGet]
+        [Route("Auth/Register")]
+        [Route("Register")]
         public IActionResult Register()
         {
             if (HttpContext.Session.GetString("UserId") != null)
@@ -67,6 +74,8 @@ namespace CafeManagement.Controllers
         }
 
         [HttpPost]
+        [Route("Auth/Register")]
+        [Route("Register")]
         [ValidateAntiForgeryToken] // ✅ CSRF protection
         public IActionResult Register(RegisterViewModel model)
         {
