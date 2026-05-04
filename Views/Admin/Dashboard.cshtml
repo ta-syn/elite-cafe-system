@@ -1,0 +1,87 @@
+@model CafeManagement.Models.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card stat-card-1">
+            <div class="stat-value">৳@Model.TotalRevenue.ToString("N0")</div>
+            <div class="stat-label">৳ Total Revenue</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card stat-card-2">
+            <div class="stat-value">@Model.TotalOrders</div>
+            <div class="stat-label"><i class="fas fa-shopping-bag me-1"></i>Total Orders</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card stat-card-3">
+            <div class="stat-value">@Model.TotalMenuItems</div>
+            <div class="stat-label"><i class="fas fa-utensils me-1"></i>Menu Items</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card stat-card-4">
+            <div class="stat-value">@Model.PendingOrders</div>
+            <div class="stat-label"><i class="fas fa-clock me-1"></i>Pending Orders</div>
+        </div>
+    </div>
+</div>
+
+<div class="card-admin p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0" style="color:#2C1810">
+            <i class="fas fa-clock me-2" style="color:#6F4E37"></i>Recent Orders
+        </h5>
+        <a asp-action="AllOrders" class="btn btn-cafe btn-sm">সব দেখুন</a>
+    </div>
+
+    @if (!Model.RecentOrders.Any())
+    {
+        <p class="text-muted text-center py-3">এখনো কোনো order নেই।</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>মোট</th>
+                    <th>Status</th>
+                    <th>সময়</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model.RecentOrders)
+                {
+                    <tr>
+                        <td><strong>#@order.Id</strong></td>
+                        <td>@order.CustomerName</td>
+                        <td>@order.Items.Count items</td>
+                        <td style="color:#6F4E37; font-weight:600">৳@order.TotalAmount</td>
+                        <td>
+                            <span class="badge-@order.Status.ToString().ToLower()">
+                                @order.Status
+                            </span>
+                        </td>
+                        <td class="text-muted small">
+                            @order.CreatedAt.ToString("dd MMM, hh:mm tt")
+                        </td>
+                        <td>
+                            <a asp-action="OrderDetail" asp-route-id="@order.Id"
+                               class="btn btn-sm btn-outline-secondary rounded-pill">
+                                দেখুন
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

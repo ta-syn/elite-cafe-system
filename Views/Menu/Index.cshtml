@@ -1,0 +1,111 @@
+@using CafeManagement.Models
+@model List<MenuItem>
+@{
+    ViewData["Title"] = "Menu";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="mb-1" style="color:#2C1810">☕ আমাদের Menu</h2>
+        <p class="text-muted">তাজা coffee আর খাবার উপভোগ করুন</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6 mb-2">
+        <div class="btn-group">
+            <a asp-controller="Menu" asp-action="Index" 
+               class="btn @(ViewBag.Category == null && ViewBag.Search == null ? "btn-cafe" : "btn-outline-secondary") btn-sm rounded-pill me-2">সব</a>
+            
+            <a asp-controller="Menu" asp-action="Index" asp-route-category="Beverage"
+               class="btn @(ViewBag.Category == "Beverage" ? "btn-cafe" : "btn-outline-secondary") btn-sm rounded-pill me-2">☕ Beverage</a>
+            
+            <a asp-controller="Menu" asp-action="Index" asp-route-category="Food"
+               class="btn @(ViewBag.Category == "Food" ? "btn-cafe" : "btn-outline-secondary") btn-sm rounded-pill">🍽️ Food</a>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <form asp-controller="Menu" asp-action="Index" method="get" class="d-flex">
+            <input type="text" name="search" class="form-control me-2"
+                   placeholder="Search করুন..." value="@ViewBag.Search" />
+            <button type="submit" class="btn btn-cafe">🔍</button>
+        </form>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5">
+        <p style="font-size:3rem">😔</p>
+        <h5 class="text-muted">কোনো item পাওয়া যায়নি</h5>
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card card-cafe h-100">
+                    <div class="text-center py-4" style="background:#FFF3E0; font-size:3.5rem">
+                        @item.ImageEmoji
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title" style="color:#2C1810">@item.Name</h5>
+                        <p class="card-text text-muted small">@item.GetDescription()</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="fw-bold" style="color:#6F4E37; font-size:1.1rem">
+                                ৳@item.Price
+                            </span>
+                            @if (Context.Session.GetString("UserId") != null)
+                            {
+                                <button class="btn btn-cafe btn-sm"
+                                        onclick="addToCart(@item.Id)">
+                                    🛒 Add
+                                </button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Auth" asp-action="Login"
+                                   class="btn btn-outline-secondary btn-sm rounded-pill">
+                                    Login করুন
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+<script>
+function addToCart(itemId) {
+    fetch('/Cart/Add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `itemId=${itemId}&quantity=1`
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            const badge = document.getElementById('cart-count');
+            if (badge) badge.textContent = data.cartCount;
+            showToast('Cart এ যোগ হয়েছে! 🛒');
+        } else {
+            showToast(data.message, 'danger');
+        }
+    });
+}
+
+function showToast(msg, type = 'success') {
+    const div = document.createElement('div');
+    div.className = `alert alert-${type} position-fixed`;
+    div.style = 'bottom:20px;right:20px;z-index:9999;min-width:200px';
+    div.textContent = msg;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 2500);
+}
+</script>
+}

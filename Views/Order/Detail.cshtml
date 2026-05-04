@@ -1,0 +1,53 @@
+@using CafeManagement.Models
+@model Order
+@{
+    ViewData["Title"] = $"Order #{Model.Id}";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card card-cafe p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 style="color:#2C1810">Order #@Model.Id</h4>
+                <span class="badge-@Model.Status.ToString().ToLower()">@Model.Status</span>
+            </div>
+            <p class="text-muted small mb-4">
+                @Model.CreatedAt.ToString("dd MMMM yyyy, hh:mm tt")
+            </p>
+
+            <table class="table table-borderless">
+                <thead>
+                    <tr style="border-bottom:2px solid #FFF3E0">
+                        <th>Item</th>
+                        <th>দাম</th>
+                        <th>পরিমাণ</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.ItemName</td>
+                            <td>৳@item.UnitPrice</td>
+                            <td>×@item.Quantity</td>
+                            <td>৳@item.Subtotal</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">মোট:</td>
+                        <td class="fw-bold" style="color:#6F4E37; font-size:1.1rem">
+                            ৳@Model.TotalAmount
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <a asp-action="History" class="btn btn-outline-secondary rounded-pill mt-2">
+                ← সব Orders
+            </a>
+        </div>
+    </div>
+</div>

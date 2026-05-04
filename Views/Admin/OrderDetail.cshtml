@@ -1,0 +1,76 @@
+@using CafeManagement.Models.Enums
+@model CafeManagement.Models.Order
+@{
+    ViewData["Title"] = $"Order #{Model.Id}";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="card-admin p-4 mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 style="color:#2C1810">Order #@Model.Id</h5>
+                <span class="badge-@Model.Status.ToString().ToLower()">@Model.Status</span>
+            </div>
+            <p class="text-muted small">
+                Customer: <strong>@Model.CustomerName</strong> |
+                সময়: @Model.CreatedAt.ToString("dd MMMM yyyy, hh:mm tt")
+            </p>
+
+            <table class="table mt-3">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>দাম</th>
+                        <th>পরিমাণ</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.ItemName</td>
+                            <td>৳@item.UnitPrice</td>
+                            <td>×@item.Quantity</td>
+                            <td>৳@item.Subtotal</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">মোট:</td>
+                        <td class="fw-bold" style="color:#6F4E37; font-size:1.1rem">
+                            ৳@Model.TotalAmount
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-5">
+        <div class="card-admin p-4">
+            <h6 style="color:#2C1810" class="mb-3">Status Update করুন</h6>
+            <form asp-action="UpdateOrderStatus" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="orderId" value="@Model.Id" />
+                <div class="mb-3">
+                    <select name="status" class="form-select">
+                        @foreach (var s in Enum.GetValues<OrderStatus>())
+                        {
+                            <option value="@s" selected="@(Model.Status == s)">@s</option>
+                        }
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-cafe w-100">
+                    ✅ Update করুন
+                </button>
+            </form>
+
+            <a asp-action="AllOrders" class="btn btn-outline-secondary w-100 mt-2 rounded-pill">
+                ← সব Orders
+            </a>
+        </div>
+    </div>
+</div>

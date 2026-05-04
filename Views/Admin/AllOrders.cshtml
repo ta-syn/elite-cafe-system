@@ -1,0 +1,67 @@
+@using CafeManagement.Models
+@using CafeManagement.Models.Enums
+@model List<Order>
+@{
+    ViewData["Title"] = "সব Orders";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="mb-4 d-flex gap-2 flex-wrap">
+    <a href="/Admin/AllOrders"
+       class="btn btn-sm @(ViewBag.StatusFilter == null ? "btn-cafe" : "btn-outline-secondary") rounded-pill">
+        সব
+    </a>
+    @foreach (var s in Enum.GetValues<OrderStatus>())
+    {
+        <a href="/Admin/AllOrders?status=@s"
+           class="btn btn-sm @(ViewBag.StatusFilter == s.ToString() ? "btn-cafe" : "btn-outline-secondary") rounded-pill">
+            @s
+        </a>
+    }
+</div>
+
+<div class="card-admin p-3">
+    @if (!Model.Any())
+    {
+        <p class="text-muted text-center py-4">কোনো order নেই।</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>মোট</th>
+                    <th>Status</th>
+                    <th>সময়</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td><strong>#@order.Id</strong></td>
+                        <td>@order.CustomerName</td>
+                        <td>@order.Items.Count items</td>
+                        <td style="color:#6F4E37; font-weight:600">৳@order.TotalAmount</td>
+                        <td>
+                            <span class="badge-@order.Status.ToString().ToLower()">@order.Status</span>
+                        </td>
+                        <td class="text-muted small">
+                            @order.CreatedAt.ToString("dd MMM, hh:mm tt")
+                        </td>
+                        <td>
+                            <a asp-action="OrderDetail" asp-route-id="@order.Id"
+                               class="btn btn-sm btn-outline-secondary rounded-pill">
+                                দেখুন
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

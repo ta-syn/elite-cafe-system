@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>☕ CafeManagement — @ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --cafe-primary: #6F4E37;
+            --cafe-dark: #2C1810;
+            --cafe-light: #FFF8F0;
+            --cafe-secondary: #D4A574;
+        }
+        body { background: var(--cafe-light); font-family: 'Segoe UI', sans-serif; }
+        .navbar-cafe { background: var(--cafe-dark) !important; }
+        .navbar-cafe .navbar-brand { color: var(--cafe-secondary) !important; font-size: 1.3rem; font-weight: 700; }
+        .navbar-cafe .nav-link { color: rgba(255,255,255,0.85) !important; }
+        .navbar-cafe .nav-link:hover { color: var(--cafe-secondary) !important; }
+        .btn-cafe { background: var(--cafe-primary); color: white; border: none; border-radius: 25px; padding: 8px 20px; transition: 0.3s; }
+        .btn-cafe:hover { background: var(--cafe-dark); color: white; }
+        .card-cafe { border: none; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: 0.3s; }
+        .card-cafe:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .badge-pending   { background: #FFF3CD; color: #856404; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .badge-preparing { background: #CCE5FF; color: #004085; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .badge-ready     { background: #D4EDDA; color: #155724; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .badge-served    { background: #E2E3E5; color: #383D41; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .badge-cancelled { background: #F8D7DA; color: #721c24; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        #cart-count { font-size: 0.7rem; }
+        footer { background: var(--cafe-dark); color: rgba(255,255,255,0.7); padding: 20px 0; margin-top: 60px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-cafe">
+    <div class="container">
+        <a class="navbar-brand" asp-controller="Menu" asp-action="Index">
+            ☕ CafeManagement
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Menu" asp-action="Index">
+                        <i class="fas fa-utensils me-1"></i>Menu
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                @if (Context.Session.GetString("UserId") != null)
+                {
+                    <li class="nav-item me-2">
+                        <a class="nav-link position-relative" asp-controller="Cart" asp-action="Index">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                                0
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item me-2">
+                        <a class="nav-link" asp-controller="Order" asp-action="History">
+                            <i class="fas fa-list me-1"></i>আমার Orders
+                        </a>
+                    </li>
+                    @if (Context.Session.GetString("UserRole") == "Admin")
+                    {
+                        <li class="nav-item me-2">
+                            <a class="nav-link" asp-controller="Admin" asp-action="Dashboard">
+                                <i class="fas fa-cog me-1"></i>Admin
+                            </a>
+                        </li>
+                    }
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Auth" asp-action="Logout">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                            (@Context.Session.GetString("UserName"))
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item me-2">
+                        <a class="nav-link" asp-controller="Auth" asp-action="Login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Auth" asp-action="Register">Register</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @RenderBody()
+</div>
+
+<footer>
+    <p class="mb-0">☕ CafeManagement System — OOP2 Project</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function updateCartCount() {
+        fetch('/Cart/Count')
+            .then(r => r.json())
+            .then(data => {
+                const el = document.getElementById('cart-count');
+                if (el) el.textContent = data.count;
+            }).catch(() => {});
+    }
+    updateCartCount();
+</script>
+
+@RenderSection("Scripts", required: false)
+</body>
+</html>
