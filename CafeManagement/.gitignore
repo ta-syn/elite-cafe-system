@@ -1,0 +1,10 @@
+bin/
+obj/
+cafe.db
+cafe.db-shm
+cafe.db-wal
+.vs/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
