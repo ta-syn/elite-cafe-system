@@ -15,6 +15,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/out .
 
-# Expose port 80 (Render's default)
+# Set environment variable for Render
+ENV ASPNETCORE_URLS=http://+:80
+
+# Expose port 80
 EXPOSE 80
 ENTRYPOINT ["dotnet", "CafeManagement.dll"]
