@@ -42,6 +42,7 @@ app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
 
+app.MapControllers();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Auth}/{action=Login}/{id?}");

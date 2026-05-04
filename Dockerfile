@@ -16,8 +16,8 @@ WORKDIR /app
 COPY --from=build /app/out .
 
 # Set environment variable for Render
-ENV ASPNETCORE_URLS=http://+:80
+ENV ASPNETCORE_URLS=http://+:10000
 
 # Expose port 80
-EXPOSE 80
+EXPOSE 10000
 ENTRYPOINT ["dotnet", "CafeManagement.dll"]

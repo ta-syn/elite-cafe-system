@@ -18,6 +18,7 @@ namespace CafeManagement.Controllers
         [HttpGet]
         [Route("Auth/Login")]
         [Route("Login")]
+        [Route("/")] // ✅ Fix: Root URL now points to Login
         public IActionResult Login()
         {
             if (HttpContext.Session.GetString("UserId") != null)
